@@ -114,7 +114,7 @@ def parse_profile_data(gains_file, losses_file, i, j, sample_number):
     losses_df = pd.read_csv(losses_file, sep="\t")
 
     # create a data frame of the sample profile data
-    sample_profile_df = pd.read_csv('sampleprofile.csv')
+    # sample_profile_df = pd.read_csv('sampleprofile.csv')
 
     #   #   #   #
     # These variable basically store every line in the file by index
