@@ -5,6 +5,12 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 sample_list = []
 
+# this code uses Kmeans clustering to cluster all the samples on the non-binary matrix of euclidian distances
+
+NUM_CLUSTERS = 6
+# global variable to define how many clusters to group samples into
+
+
 def create_aggregated_grayscales(matrix_file):
     matrix_df = pd.read_csv(matrix_file)
     data_list = []
@@ -24,22 +30,20 @@ def create_aggregated_grayscales(matrix_file):
 def perform_clustering(grayscale_images_list):
     grayscale_images = np.array(grayscale_images_list)
     flattened_images = grayscale_images.reshape(grayscale_images.shape[0], -1)
-    num_clusters = 6
     n_init_value = 50
-    kmeans = KMeans(n_clusters=num_clusters, n_init=n_init_value, random_state=42)
+    kmeans = KMeans(n_clusters=NUM_CLUSTERS, n_init=n_init_value, random_state=42)
     cluster_labels = kmeans.fit_predict(flattened_images)
     return cluster_labels
 
 def produce_bar_plot(flattened_images):
-    num_clusters = 6
     n_init_value = 50
-    kmeans = KMeans(n_clusters=num_clusters, n_init=n_init_value, random_state=42)
+    kmeans = KMeans(n_clusters=NUM_CLUSTERS, n_init=n_init_value, random_state=42)
     cluster_labels = kmeans.fit_predict(flattened_images)
     # Count the number of samples in each cluster
     cluster_counts = np.bincount(cluster_labels)
 
     # Plot the histogram or bar plot of cluster assignments
-    plt.bar(range(num_clusters), cluster_counts, tick_label=[f"{i}" for i in range(num_clusters)])
+    plt.bar(range(NUM_CLUSTERS), cluster_counts, tick_label=[f"{i}" for i in range(NUM_CLUSTERS)])
     plt.xlabel("Cluster")
     plt.ylabel("Number of Samples")
     plt.title("Sample Distribution across Clusters")
@@ -50,8 +54,8 @@ def elbow_method(flattened_images):
     # Perform K-means for different numbers of clusters and calculate WCSS
     wcss = []
     max_clusters = 10
-    for num_clusters in range(1, max_clusters + 1):
-        kmeans = KMeans(n_clusters=num_clusters, random_state=42)
+    for NUM_CLUSTERS in range(1, max_clusters + 1):
+        kmeans = KMeans(n_clusters=NUM_CLUSTERS, random_state=42)
         kmeans.fit(flattened_images)
         wcss.append(kmeans.inertia_)
 
@@ -67,8 +71,8 @@ def score(flattened_images):
     # Calculate Silhouette scores for different numbers of clusters
     max_clusters = 10
     silhouette_scores = []
-    for num_clusters in range(2, max_clusters + 1):
-        kmeans = KMeans(n_clusters=num_clusters, random_state=42)
+    for NUM_CLUSTERS in range(2, max_clusters + 1):
+        kmeans = KMeans(n_clusters=NUM_CLUSTERS, random_state=42)
         cluster_labels = kmeans.fit_predict(flattened_images)
         silhouette_scores.append(silhouette_score(flattened_images, cluster_labels))
 
@@ -87,7 +91,7 @@ def return_file(output_file, cluster_labels):
     data_frame.to_csv(output_file, index=False)
 def main():
     matrix_file_name = "matrix.csv"
-    output_file_name = "myclusters.csv"
+    output_file_name = "KMeansClusters.csv"
     grayscale_images_list = create_aggregated_grayscales(matrix_file_name)
     cluster_labels = perform_clustering(grayscale_images_list)
     return_file(output_file_name, cluster_labels)
